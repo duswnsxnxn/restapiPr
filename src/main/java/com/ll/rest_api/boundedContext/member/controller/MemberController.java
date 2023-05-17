@@ -1,7 +1,7 @@
 package com.ll.rest_api.boundedContext.member.controller;
 
-import com.ll.rest_api.boundedContext.member.entity.Member;
 import com.ll.rest_api.boundedContext.member.service.MemberService;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
@@ -28,7 +28,11 @@ public class MemberController {
     }
 
     @PostMapping("/login")
-    public Member login(@Valid @RequestBody LoginRequest loginRequest) {
-        return memberService.findByUsername(loginRequest.getUsername()).orElse(null);
+    public String login(@Valid @RequestBody LoginRequest loginRequest, HttpServletResponse resp) {
+        String accessToken = memberService.genAccessToken(loginRequest.getUsername(), loginRequest.getPassword());
+        
+        resp.addHeader("Authentication", accessToken);
+
+        return "응답본문";
     }
 }
